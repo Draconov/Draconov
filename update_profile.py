@@ -33,16 +33,29 @@ MATRIX_FONT_SIZE = 11
 MATRIX_LINE_HEIGHT = 13
 MATRIX_TOP = 122
 MATRIX_BOTTOM = 578
-MATRIX_LEFT_XS = (22, 44, 66, 88, 110, 132, 154)
-MATRIX_RIGHT_XS = (686, 708, 730, 752, 774, 796, 818)
-MATRIX_STREAMS = (
-    "01DRACONOV<>10{}[]+*",
-    "101{D}R/A<C>O[N]O(V)01",
-    "</>DRACONOV::0101{}<>!",
-    "0xD1R0A1C0O1N0O1V01",
-    "[D][R][A][C][O][N][O][V]",
-    "0101DRACONOV//\\++--##",
-    "{0}D{1}R{0}A{1}C{0}O{1}N{0}O{1}V",
+MATRIX_HEAD_GLOW = "#cfff7a"
+MATRIX_CHAR_POOL = r"01<>[]{}()/\|+-=*#;:.ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+MATRIX_LEFT_COLUMNS = (
+    {"x": 17,  "trail": 20, "step": 10, "dur": 5.3, "delay": -0.2, "phase": 4,  "density": 1.00, "opacity": 1.00, "size": 11.5, "jitter": 1.2},
+    {"x": 31,  "trail": 13, "step": 12, "dur": 7.9, "delay": -1.7, "phase": 17, "density": 0.82, "opacity": 0.90, "size": 10.7, "jitter": 0.8},
+    {"x": 47,  "trail": 17, "step": 11, "dur": 6.2, "delay": -0.8, "phase": 10, "density": 0.96, "opacity": 0.96, "size": 11.1, "jitter": 1.0},
+    {"x": 64,  "trail": 10, "step": 13, "dur": 9.0, "delay": -2.6, "phase": 24, "density": 0.72, "opacity": 0.84, "size": 10.4, "jitter": 0.9},
+    {"x": 84,  "trail": 15, "step": 10, "dur": 6.9, "delay": -1.0, "phase": 8,  "density": 0.93, "opacity": 0.91, "size": 11.0, "jitter": 1.1},
+    {"x": 103, "trail": 9,  "step": 12, "dur": 9.8, "delay": -3.9, "phase": 29, "density": 0.68, "opacity": 0.77, "size": 10.2, "jitter": 0.8},
+    {"x": 124, "trail": 13, "step": 11, "dur": 8.1, "delay": -2.0, "phase": 19, "density": 0.86, "opacity": 0.79, "size": 10.6, "jitter": 0.7},
+    {"x": 145, "trail": 8,  "step": 13, "dur": 10.9,"delay": -4.8, "phase": 35, "density": 0.60, "opacity": 0.64, "size": 9.9,  "jitter": 0.6},
+    {"x": 160, "trail": 6,  "step": 14, "dur": 12.0,"delay": -5.8, "phase": 39, "density": 0.52, "opacity": 0.48, "size": 9.6,  "jitter": 0.5},
+)
+MATRIX_RIGHT_COLUMNS = (
+    {"x": 680, "trail": 6,  "step": 14, "dur": 11.8,"delay": -5.7, "phase": 38, "density": 0.52, "opacity": 0.48, "size": 9.6,  "jitter": 0.5},
+    {"x": 696, "trail": 8,  "step": 13, "dur": 10.7,"delay": -4.7, "phase": 34, "density": 0.61, "opacity": 0.64, "size": 9.9,  "jitter": 0.6},
+    {"x": 716, "trail": 13, "step": 11, "dur": 8.0, "delay": -2.2, "phase": 18, "density": 0.87, "opacity": 0.79, "size": 10.6, "jitter": 0.7},
+    {"x": 737, "trail": 9,  "step": 12, "dur": 9.6, "delay": -4.1, "phase": 28, "density": 0.69, "opacity": 0.77, "size": 10.2, "jitter": 0.8},
+    {"x": 756, "trail": 15, "step": 10, "dur": 6.8, "delay": -1.2, "phase": 7,  "density": 0.93, "opacity": 0.91, "size": 11.0, "jitter": 1.1},
+    {"x": 776, "trail": 10, "step": 13, "dur": 8.9, "delay": -2.8, "phase": 23, "density": 0.72, "opacity": 0.84, "size": 10.4, "jitter": 0.9},
+    {"x": 793, "trail": 17, "step": 11, "dur": 6.1, "delay": -0.9, "phase": 9,  "density": 0.96, "opacity": 0.96, "size": 11.1, "jitter": 1.0},
+    {"x": 809, "trail": 13, "step": 12, "dur": 7.7, "delay": -1.8, "phase": 16, "density": 0.83, "opacity": 0.90, "size": 10.7, "jitter": 0.8},
+    {"x": 823, "trail": 20, "step": 10, "dur": 5.1, "delay": -0.3, "phase": 3,  "density": 1.00, "opacity": 1.00, "size": 11.5, "jitter": 1.2},
 )
 
 # Pixel mask traced from the supplied DRACONOV ANSI reference. 0 = transparent,
@@ -241,64 +254,156 @@ def ansi_paths():
     return {role: "".join(parts) for role, parts in paths.items()}
 
 
-def _matrix_column(x, stream, duration, delay, opacity):
-    # Each stream is duplicated vertically. Both copies move by exactly one
-    # period, producing a seamless rain loop without touching the info panel.
-    chars = list(stream)
-    period = max(len(chars) * MATRIX_LINE_HEIGHT, 260)
+def _matrix_stream(seed, count):
+    alphabet = MATRIX_CHAR_POOL
+    out = []
+    pos = (seed * 13 + 5) % len(alphabet)
+    # A few deterministic hidden name fragments. They are intentionally sparse.
+    name_slots = {5, 24} if seed % 3 == 0 else ({12} if seed % 4 == 0 else set())
+    i = 0
+    while len(out) < count:
+        if i in name_slots and len(out) + 8 <= count:
+            out.extend("DRACONOV")
+            i += 8
+            continue
+        pos = (pos + 3 + (seed % 9) + (i % 5)) % len(alphabet)
+        out.append(alphabet[pos])
+        i += 1
+    return out[:count]
+
+
+def _matrix_text(x, y, ch, fill, opacity, size=None, extra=''):
+    return (
+        f'<text x="{x:.2f}" y="{y}" fill="{fill}" opacity="{opacity:.2f}" '
+        f'font-size="{(size or MATRIX_FONT_SIZE):.1f}px" text-anchor="middle"{extra}>'
+        f'{html.escape(ch)}</text>'
+    )
+
+
+def _jitter(seed, row, amount):
+    # Small deterministic lateral movement makes streams feel less like a rigid grid.
+    if not amount:
+        return 0.0
+    n = ((seed * 37 + row * 17) % 11) - 5
+    return (n / 5.0) * amount
+
+
+def _matrix_column(spec, seed, glow_filter, mode):
+    rows = int((MATRIX_BOTTOM - MATRIX_TOP) / spec["step"]) + spec["trail"] + 10
+    chars = _matrix_stream(seed, rows + 16)
+    period = rows * spec["step"]
+    visible_rows = []
+    for idx in range(spec["trail"]):
+        row = spec["phase"] - idx
+        while row < 0:
+            row += rows
+        visible_rows.append(row)
+    visible_set = set(visible_rows)
 
     def copy(base_y, anim_delay):
-        parts = [f'<g opacity="{opacity:.2f}">']
-        for i, ch in enumerate(chars):
-            y = base_y + i * MATRIX_LINE_HEIGHT
-            # Brighter head and a small neon shoulder, then darker trail.
-            if i == len(chars) - 1:
-                fill, op = MATRIX_HEAD, 1.0
-            elif i >= len(chars) - 4:
-                fill, op = MATRIX_MAIN, 0.95 - (len(chars) - 1 - i) * 0.10
-            elif i % 7 == 0:
-                fill, op = MATRIX_MAIN, 0.72
-            else:
-                fill, op = MATRIX_DIM, 0.62
-            parts.append(
-                f'<text x="{x}" y="{y}" fill="{fill}" opacity="{op:.2f}" '
-                f'font-size="{MATRIX_FONT_SIZE}px" text-anchor="middle">{html.escape(ch)}</text>'
-            )
-        parts.append(
-            f'<animateTransform attributeName="transform" type="translate" '
-            f'from="0 0" to="0 {period}" dur="{duration:.1f}s" begin="{anim_delay:.1f}s" repeatCount="indefinite"/>'
-        )
-        parts.append('</g>')
-        return ''.join(parts)
+        glow_parts = []
+        crisp_parts = []
+        for row in range(rows):
+            if row not in visible_set:
+                continue
+            dist = (spec["phase"] - row) % rows
+            if dist >= spec["trail"]:
+                continue
+            # Sparse streams intentionally skip some cells.
+            gate = ((row * 7 + seed * 3) % 100) / 100.0
+            if gate > spec["density"] and dist > 1:
+                continue
+            y = base_y + row * spec["step"]
+            x = spec["x"] + _jitter(seed, row, spec.get("jitter", 0.0))
+            ch = chars[row % len(chars)]
+            base_size = spec.get("size", MATRIX_FONT_SIZE)
 
-    # Keep one copy visible even in static SVG renderers that ignore SMIL.
-    phase = int(abs(delay) * 41) % period
-    base = MATRIX_TOP - phase - 10
-    return copy(base, delay) + copy(base - period, delay)
+            if dist == 0:
+                fill = MATRIX_HEAD
+                glow_fill = MATRIX_HEAD_GLOW
+                op = 1.0 * spec["opacity"]
+                gop = 0.58 if mode == "dark" else 0.23
+                size = base_size + 0.9
+            elif dist == 1:
+                fill = MATRIX_MAIN
+                glow_fill = MATRIX_MAIN
+                op = 0.97 * spec["opacity"]
+                gop = 0.34 if mode == "dark" else 0.13
+                size = base_size + 0.4
+            elif dist <= 3:
+                fill = MATRIX_MAIN
+                glow_fill = MATRIX_MAIN
+                op = (0.86 - 0.12 * (dist - 2)) * spec["opacity"]
+                gop = 0.20 if mode == "dark" else 0.07
+                size = base_size
+            elif dist <= 6:
+                fill = MATRIX_MAIN if dist % 3 == 0 else MATRIX_DIM
+                glow_fill = MATRIX_MAIN
+                op = (0.49 - 0.055 * (dist - 4)) * spec["opacity"]
+                gop = 0.09 if mode == "dark" else 0.03
+                size = base_size - 0.2
+            else:
+                fill = MATRIX_DIM
+                glow_fill = MATRIX_DIM
+                op = max(0.08, 0.28 - 0.020 * (dist - 7)) * spec["opacity"]
+                gop = 0.0
+                size = base_size - 0.45
+
+            if gop > 0:
+                glow_parts.append(_matrix_text(x, y, ch, glow_fill, gop, size, f' filter="url(#{glow_filter})"'))
+            crisp_parts.append(_matrix_text(x, y, ch, fill, op, size))
+
+        return (
+            '<g>' + ''.join(glow_parts) + ''.join(crisp_parts)
+            + f'<animateTransform attributeName="transform" type="translate" from="0 0" to="0 {period}" '
+            + f'dur="{spec["dur"]:.1f}s" begin="{anim_delay:.1f}s" repeatCount="indefinite"/></g>'
+        )
+
+    # Deliberately place every stream head somewhere inside the card for the
+    # static fallback. Animation starts from that staggered snapshot.
+    span = MATRIX_BOTTOM - MATRIX_TOP - 86
+    target_head_y = MATRIX_TOP + 48 + ((seed * 83 + int(abs(spec["delay"]) * 29)) % max(span, 1))
+    base = target_head_y - spec["phase"] * spec["step"]
+    return copy(base, spec["delay"]) + copy(base - period, spec["delay"])
 
 
 def matrix_rain(mode):
-    # The side strips are clipped so the rain never competes with the profile
-    # text. Light mode is intentionally a little quieter.
-    opacity = 0.90 if mode == "dark" else 0.64
+    glow_std = 1.15 if mode == "dark" else 0.65
+    fog_opacity = 0.065 if mode == "dark" else 0.024
     out = [
         '<defs>',
-        f'<clipPath id="matrix-left"><rect x="10" y="{MATRIX_TOP}" width="158" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
-        f'<clipPath id="matrix-right"><rect x="672" y="{MATRIX_TOP}" width="158" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
+        f'<clipPath id="matrix-left"><rect x="8" y="{MATRIX_TOP}" width="162" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
+        f'<clipPath id="matrix-right"><rect x="670" y="{MATRIX_TOP}" width="162" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
+        '<linearGradient id="matrix-edge-left" x1="0" y1="0" x2="1" y2="0">'
+        '<stop offset="0%" stop-color="#39FF14" stop-opacity="1"/>'
+        '<stop offset="58%" stop-color="#39FF14" stop-opacity="0.18"/>'
+        '<stop offset="100%" stop-color="#39FF14" stop-opacity="0"/></linearGradient>',
+        '<linearGradient id="matrix-edge-right" x1="1" y1="0" x2="0" y2="0">'
+        '<stop offset="0%" stop-color="#39FF14" stop-opacity="1"/>'
+        '<stop offset="58%" stop-color="#39FF14" stop-opacity="0.18"/>'
+        '<stop offset="100%" stop-color="#39FF14" stop-opacity="0"/></linearGradient>',
+        '<linearGradient id="matrix-vertical-fade" x1="0" y1="0" x2="0" y2="1">'
+        '<stop offset="0%" stop-color="white" stop-opacity="0.20"/>'
+        '<stop offset="10%" stop-color="white" stop-opacity="1"/>'
+        '<stop offset="90%" stop-color="white" stop-opacity="1"/>'
+        '<stop offset="100%" stop-color="white" stop-opacity="0.22"/></linearGradient>',
+        '<mask id="matrix-left-mask"><rect x="8" y="0" width="162" height="590" fill="url(#matrix-vertical-fade)"/></mask>',
+        '<mask id="matrix-right-mask"><rect x="670" y="0" width="162" height="590" fill="url(#matrix-vertical-fade)"/></mask>',
+        f'<filter id="matrix-glow" x="-70%" y="-25%" width="240%" height="150%">'
+        f'<feGaussianBlur stdDeviation="{glow_std}"/></filter>',
         '</defs>',
-        '<g font-family="Consolas, Menlo, monospace" font-weight="700">',
-        '<g clip-path="url(#matrix-left)">',
+        f'<rect x="8" y="0" width="162" height="{CARD_HEIGHT}" fill="url(#matrix-edge-left)" opacity="{fog_opacity}" mask="url(#matrix-left-mask)"/>',
+        f'<rect x="670" y="0" width="162" height="{CARD_HEIGHT}" fill="url(#matrix-edge-right)" opacity="{fog_opacity}" mask="url(#matrix-right-mask)"/>',
+        '<g font-family="Consolas, Menlo, monospace" font-weight="700" letter-spacing="0.2px">',
+        '<g clip-path="url(#matrix-left)" mask="url(#matrix-left-mask)">',
     ]
-    for i, x in enumerate(MATRIX_LEFT_XS):
-        stream = MATRIX_STREAMS[i % len(MATRIX_STREAMS)]
-        out.append(_matrix_column(x, stream, 6.8 + (i % 4) * 1.35, -i * 0.65, opacity))
-    out.append('</g><g clip-path="url(#matrix-right)">')
-    for i, x in enumerate(MATRIX_RIGHT_XS):
-        stream = MATRIX_STREAMS[(i + 3) % len(MATRIX_STREAMS)]
-        out.append(_matrix_column(x, stream, 7.5 + (i % 5) * 1.2, -i * 0.82 - 0.4, opacity))
+    for i, spec in enumerate(MATRIX_LEFT_COLUMNS):
+        out.append(_matrix_column(spec, i + 1, 'matrix-glow', mode))
+    out.append('</g><g clip-path="url(#matrix-right)" mask="url(#matrix-right-mask)">')
+    for i, spec in enumerate(MATRIX_RIGHT_COLUMNS):
+        out.append(_matrix_column(spec, i + 31, 'matrix-glow', mode))
     out.append('</g></g>')
     return ''.join(out)
-
 
 def render(mode, stats):
     p = PALETTES[mode]
@@ -335,9 +440,10 @@ def selfcheck():
     assert ANSI_PIXEL_WIDTH < CARD_WIDTH
     assert ANSI_Y + ANSI_PIXEL_HEIGHT < INFO_Y
     assert (ANSI_MAIN, ANSI_HIGHLIGHT, ANSI_SHADOW) == ("#39FF14", "#F4FF63", "#0E7A0D")
-    assert "DRACONOV" in "".join(MATRIX_STREAMS)
-    assert max(MATRIX_LEFT_XS) < INFO_X
-    assert min(MATRIX_RIGHT_XS) > INFO_X + 400
+    assert len(MATRIX_LEFT_COLUMNS) >= 9
+    assert len(MATRIX_RIGHT_COLUMNS) >= 9
+    assert max(c["x"] for c in MATRIX_LEFT_COLUMNS) < INFO_X
+    assert min(c["x"] for c in MATRIX_RIGHT_COLUMNS) > INFO_X + 400
 
 
 if __name__ == "__main__":
