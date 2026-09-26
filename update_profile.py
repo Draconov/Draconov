@@ -20,53 +20,30 @@ ANSI_Y = 20
 ANSI_PIXEL_WIDTH = 720
 ANSI_PIXEL_HEIGHT = 90
 
-# Character-cell advance for the info panel. We render every segment against this
-# same grid so alignment stays stable even when some labels use the custom pixel
-# ANSI font instead of normal SVG text.
-MONO_ADVANCE = 7.25
-LABEL_FONT_SCALE = 1.22
-LABEL_FONT_TOP_OFFSET = 9.5
-LABEL_FONT_X_PAD = 0.0
-LABEL_CHAR_ADVANCE = 7.25
-
 # Exact ANSI banner palette chosen for the profile wordmark.
 ANSI_MAIN = "#39FF14"
 ANSI_HIGHLIGHT = "#F4FF63"
 ANSI_SHADOW = "#0E7A0D"
 
-# Compact orange bitmap font for the left-side labels only.
-# 1 = filled pixel, . = empty. Lowercase characters are mapped to uppercase.
-LABEL_FONT = {
-    ' ': [".....", ".....", ".....", ".....", ".....", ".....", "....."],
-    '.': [".....", ".....", ".....", ".....", ".....", ".##..", ".##.."],
-    ':': [".....", ".##..", ".##..", ".....", ".##..", ".##..", "....."],
-    '?': [".###.", "#...#", "...#.", "..#..", "..#..", ".....", "..#.."],
-    'A': ["..#..", ".#.#.", "#...#", "#####", "#...#", "#...#", "#...#"],
-    'B': ["####.", "#...#", "#...#", "####.", "#...#", "#...#", "####."],
-    'C': [".###.", "#...#", "#....", "#....", "#....", "#...#", ".###."],
-    'D': ["####.", "#...#", "#...#", "#...#", "#...#", "#...#", "####."],
-    'E': ["#####", "#....", "#....", "####.", "#....", "#....", "#####"],
-    'F': ["#####", "#....", "#....", "####.", "#....", "#....", "#...."],
-    'G': [".###.", "#...#", "#....", "#.###", "#...#", "#...#", ".###."],
-    'H': ["#...#", "#...#", "#...#", "#####", "#...#", "#...#", "#...#"],
-    'I': ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "#####"],
-    'J': ["..###", "...#.", "...#.", "...#.", "#..#.", "#..#.", ".##.."],
-    'K': ["#...#", "#..#.", "#.#..", "##...", "#.#..", "#..#.", "#...#"],
-    'L': ["#....", "#....", "#....", "#....", "#....", "#....", "#####"],
-    'M': ["#...#", "##.##", "#.#.#", "#...#", "#...#", "#...#", "#...#"],
-    'N': ["#...#", "##..#", "#.#.#", "#..##", "#...#", "#...#", "#...#"],
-    'O': [".###.", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
-    'P': ["####.", "#...#", "#...#", "####.", "#....", "#....", "#...."],
-    'Q': [".###.", "#...#", "#...#", "#...#", "#.#.#", "#..##", ".####"],
-    'R': ["####.", "#...#", "#...#", "####.", "#.#..", "#..#.", "#...#"],
-    'S': [".####", "#....", "#....", ".###.", "....#", "....#", "####."],
-    'T': ["#####", "..#..", "..#..", "..#..", "..#..", "..#..", "..#.."],
-    'U': ["#...#", "#...#", "#...#", "#...#", "#...#", "#...#", ".###."],
-    'V': ["#...#", "#...#", "#...#", "#...#", ".#.#.", ".#.#.", "..#.."],
-    'W': ["#...#", "#...#", "#...#", "#.#.#", "#.#.#", "##.##", "#...#"],
-    'Y': ["#...#", ".#.#.", "..#..", "..#..", "..#..", "..#..", "..#.."],
-    'Z': ["#####", "...#.", "..#..", ".#...", "#....", "#....", "#####"],
-}
+# Matrix rain around the info block. The center is deliberately left clear.
+MATRIX_MAIN = "#39FF14"
+MATRIX_HEAD = "#F4FF63"
+MATRIX_DIM = "#0E7A0D"
+MATRIX_FONT_SIZE = 11
+MATRIX_LINE_HEIGHT = 13
+MATRIX_TOP = 122
+MATRIX_BOTTOM = 578
+MATRIX_LEFT_XS = (22, 44, 66, 88, 110, 132, 154)
+MATRIX_RIGHT_XS = (686, 708, 730, 752, 774, 796, 818)
+MATRIX_STREAMS = (
+    "01DRACONOV<>10{}[]+*",
+    "101{D}R/A<C>O[N]O(V)01",
+    "</>DRACONOV::0101{}<>!",
+    "0xD1R0A1C0O1N0O1V01",
+    "[D][R][A][C][O][N][O][V]",
+    "0101DRACONOV//\\++--##",
+    "{0}D{1}R{0}A{1}C{0}O{1}N{0}O{1}V",
+)
 
 # Pixel mask traced from the supplied DRACONOV ANSI reference. 0 = transparent,
 # 1 = dark-green depth, 2 = neon-green body, 3 = yellow highlight/scanline.
@@ -76,6 +53,8 @@ LABEL_FONT = {
 ANSI_PIXEL_DATA_B64 = (
     "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"
 )
+
+
 
 TOKEN = os.environ.get("GITHUB_TOKEN") or os.environ.get("ACCESS_TOKEN") or ""
 PRIV_TOKEN = os.environ.get("ACCESS_TOKEN") or TOKEN
@@ -168,7 +147,7 @@ def loc(repo_names, user_id):
             while True:
                 ref = graphql(LOC_QUERY, {"owner": USER, "name": name, "id": user_id, "cursor": cursor}, token=PRIV_TOKEN)["repository"]["defaultBranchRef"]
                 if ref is None:
-                    break
+                    break  # empty repo
                 h = ref["target"]["history"]
                 add += sum(n["additions"] for n in h["nodes"])
                 rem += sum(n["deletions"] for n in h["nodes"])
@@ -240,6 +219,8 @@ def _ansi_pixels():
 
 
 def ansi_paths():
+    # Merge adjacent same-colour pixels into horizontal SVG path runs. This keeps
+    # the generated SVG compact while preserving the reference pixel-for-pixel.
     pixels = _ansi_pixels()
     paths = {1: [], 2: [], 3: []}
     w = ANSI_PIXEL_WIDTH
@@ -260,364 +241,65 @@ def ansi_paths():
     return {role: "".join(parts) for role, parts in paths.items()}
 
 
-def bitmap_label_path(text, x, top_y):
-    parts = []
-    for i, ch in enumerate(text):
-        glyph = LABEL_FONT.get(ch.upper(), LABEL_FONT['?'])
-        bx = x + i * LABEL_CHAR_ADVANCE + LABEL_FONT_X_PAD
-        for row_i, row in enumerate(glyph):
-            col = 0
-            while col < len(row):
-                if row[col] != '#':
-                    col += 1
-                    continue
-                end = col + 1
-                while end < len(row) and row[end] == '#':
-                    end += 1
-                rx = bx + col * LABEL_FONT_SCALE
-                ry = top_y + row_i * LABEL_FONT_SCALE
-                rw = (end - col) * LABEL_FONT_SCALE
-                h = LABEL_FONT_SCALE
-                parts.append(f"M{rx:.2f} {ry:.2f}h{rw:.2f}v{h:.2f}h-{rw:.2f}z")
-                col = end
-    return ''.join(parts)
+def _matrix_column(x, stream, duration, delay, opacity):
+    # Each stream is duplicated vertically. Both copies move by exactly one
+    # period, producing a seamless rain loop without touching the info panel.
+    chars = list(stream)
+    period = max(len(chars) * MATRIX_LINE_HEIGHT, 260)
 
-
-def render_text_segment(text, color, x, y, width=None):
-    attrs = ''
-    if width is not None and text:
-        attrs = f' textLength="{width:.2f}" lengthAdjust="spacingAndGlyphs"'
-    return f'<text x="{x:.2f}" y="{y}" fill="{color}"{attrs} xml:space="preserve">{html.escape(text)}</text>'
-
-
-
-
-INFO_FONT_SIZE = 13
-INFO_FONT_FAMILY = "Consolas, Menlo, monospace"
-GRID_ADVANCE = 7.15
-PIXEL_FONT_TOP_OFFSET = 10
-
-PIXEL_CHAR_ADVANCE = 7
-
-PIXEL_GLYPHS = {
-    'A': [
-        '  ##  ',
-        ' #  # ',
-        '#    #',
-        '######',
-        '#    #',
-        '#    #',
-        '#    #',
-    ],
-    'B': [
-        '##### ',
-        '#    #',
-        '#    #',
-        '##### ',
-        '#    #',
-        '#    #',
-        '##### ',
-    ],
-    'C': [
-        ' #### ',
-        '#    #',
-        '#     ',
-        '#     ',
-        '#     ',
-        '#    #',
-        ' #### ',
-    ],
-    'D': [
-        '##### ',
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        '##### ',
-    ],
-    'E': [
-        '######',
-        '#     ',
-        '#     ',
-        '##### ',
-        '#     ',
-        '#     ',
-        '######',
-    ],
-    'F': [
-        '######',
-        '#     ',
-        '#     ',
-        '##### ',
-        '#     ',
-        '#     ',
-        '#     ',
-    ],
-    'G': [
-        ' #### ',
-        '#    #',
-        '#     ',
-        '#  ###',
-        '#    #',
-        '#    #',
-        ' #### ',
-    ],
-    'H': [
-        '#    #',
-        '#    #',
-        '#    #',
-        '######',
-        '#    #',
-        '#    #',
-        '#    #',
-    ],
-    'I': [
-        '######',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '######',
-    ],
-    'J': [
-        '######',
-        '    ##',
-        '    ##',
-        '    ##',
-        '#   ##',
-        '#   ##',
-        ' ###  ',
-    ],
-    'K': [
-        '#   ##',
-        '#  ## ',
-        '# ##  ',
-        '###   ',
-        '# ##  ',
-        '#  ## ',
-        '#   ##',
-    ],
-    'L': [
-        '#     ',
-        '#     ',
-        '#     ',
-        '#     ',
-        '#     ',
-        '#     ',
-        '######',
-    ],
-    'M': [
-        '#    #',
-        '##  ##',
-        '# ## #',
-        '# ## #',
-        '#    #',
-        '#    #',
-        '#    #',
-    ],
-    'N': [
-        '#    #',
-        '##   #',
-        '# #  #',
-        '#  # #',
-        '#   ##',
-        '#    #',
-        '#    #',
-    ],
-    'O': [
-        ' #### ',
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        ' #### ',
-    ],
-    'P': [
-        '##### ',
-        '#    #',
-        '#    #',
-        '##### ',
-        '#     ',
-        '#     ',
-        '#     ',
-    ],
-    'Q': [
-        ' #### ',
-        '#    #',
-        '#    #',
-        '#    #',
-        '#  # #',
-        '#   ##',
-        ' #####',
-    ],
-    'R': [
-        '##### ',
-        '#    #',
-        '#    #',
-        '##### ',
-        '# ##  ',
-        '#  ## ',
-        '#   ##',
-    ],
-    'S': [
-        ' #### ',
-        '#    #',
-        '#     ',
-        ' #### ',
-        '     #',
-        '#    #',
-        ' #### ',
-    ],
-    'T': [
-        '######',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-    ],
-    'U': [
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        ' #### ',
-    ],
-    'V': [
-        '#    #',
-        '#    #',
-        '#    #',
-        '#    #',
-        ' #  # ',
-        ' #  # ',
-        '  ##  ',
-    ],
-    'W': [
-        '#    #',
-        '#    #',
-        '#    #',
-        '# ## #',
-        '# ## #',
-        '##  ##',
-        '#    #',
-    ],
-    'X': [
-        '#    #',
-        ' #  # ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        ' #  # ',
-        '#    #',
-    ],
-    'Y': [
-        '#    #',
-        ' #  # ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-        '  ##  ',
-    ],
-    'Z': [
-        '######',
-        '    ##',
-        '   ## ',
-        '  ##  ',
-        ' ##   ',
-        '##    ',
-        '######',
-    ],
-    '.': [
-        '      ',
-        '      ',
-        '      ',
-        '      ',
-        '      ',
-        '  ##  ',
-        '  ##  ',
-    ],
-    ':': [
-        '      ',
-        '  ##  ',
-        '  ##  ',
-        '      ',
-        '  ##  ',
-        '  ##  ',
-        '      ',
-    ],
-    ' ': [
-        '      ',
-        '      ',
-        '      ',
-        '      ',
-        '      ',
-        '      ',
-        '      ',
-    ],
-}
-
-
-
-def line_to_cells(segs, width=W):
-    cells = []
-    for txt, color in segs:
-        for ch in txt:
-            cells.append((ch, color))
-    if len(cells) < width:
-        cells.extend([(' ', 'v')] * (width - len(cells)))
-    return cells[:width]
-
-
-def pixel_text_path(text, x, top_y):
-    parts = []
-    cursor = 0
-    for ch in text:
-        glyph = PIXEL_GLYPHS.get(ch.upper(), PIXEL_GLYPHS[' '])
-        for gy, row in enumerate(glyph):
-            run_start = None
-            for gx, px in enumerate(row + ' '):
-                if px != ' ' and run_start is None:
-                    run_start = gx
-                elif px == ' ' and run_start is not None:
-                    run = gx - run_start
-                    parts.append(f'M{x + cursor + run_start} {top_y + gy}h{run}v1h-{run}z')
-                    run_start = None
-        cursor += PIXEL_CHAR_ADVANCE
-    return ''.join(parts)
-
-
-def render_info_block(out, palette, stats):
-    for i, segs in enumerate(info_lines(stats)):
-        if not segs:
-            continue
-        cells = line_to_cells(segs)
-        y = INFO_Y + i * INFO_LINE_HEIGHT
-        top_y = y - PIXEL_FONT_TOP_OFFSET
-        col = 0
-        while col < len(cells):
-            color = cells[col][1]
-            start = col
-            while col < len(cells) and cells[col][1] == color:
-                col += 1
-            text_run = ''.join(ch for ch, _ in cells[start:col])
-            x = INFO_X + start * GRID_ADVANCE
-            if color == 'k':
-                path_d = pixel_text_path(text_run, round(x), top_y)
-                if path_d:
-                    out.append(f'<path d="{path_d}" fill="{palette[color]}" shape-rendering="crispEdges"/>')
+    def copy(base_y, anim_delay):
+        parts = [f'<g opacity="{opacity:.2f}">']
+        for i, ch in enumerate(chars):
+            y = base_y + i * MATRIX_LINE_HEIGHT
+            # Brighter head and a small neon shoulder, then darker trail.
+            if i == len(chars) - 1:
+                fill, op = MATRIX_HEAD, 1.0
+            elif i >= len(chars) - 4:
+                fill, op = MATRIX_MAIN, 0.95 - (len(chars) - 1 - i) * 0.10
+            elif i % 7 == 0:
+                fill, op = MATRIX_MAIN, 0.72
             else:
-                out.append(
-                    f'<text x="{x:.2f}" y="{y}" fill="{palette[color]}" '
-                    f'font-family="{INFO_FONT_FAMILY}" font-size="{INFO_FONT_SIZE}px" xml:space="preserve">'
-                    f'{html.escape(text_run)}</text>'
-                )
+                fill, op = MATRIX_DIM, 0.62
+            parts.append(
+                f'<text x="{x}" y="{y}" fill="{fill}" opacity="{op:.2f}" '
+                f'font-size="{MATRIX_FONT_SIZE}px" text-anchor="middle">{html.escape(ch)}</text>'
+            )
+        parts.append(
+            f'<animateTransform attributeName="transform" type="translate" '
+            f'from="0 0" to="0 {period}" dur="{duration:.1f}s" begin="{anim_delay:.1f}s" repeatCount="indefinite"/>'
+        )
+        parts.append('</g>')
+        return ''.join(parts)
+
+    # Keep one copy visible even in static SVG renderers that ignore SMIL.
+    phase = int(abs(delay) * 41) % period
+    base = MATRIX_TOP - phase - 10
+    return copy(base, delay) + copy(base - period, delay)
+
+
+def matrix_rain(mode):
+    # The side strips are clipped so the rain never competes with the profile
+    # text. Light mode is intentionally a little quieter.
+    opacity = 0.90 if mode == "dark" else 0.64
+    out = [
+        '<defs>',
+        f'<clipPath id="matrix-left"><rect x="10" y="{MATRIX_TOP}" width="158" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
+        f'<clipPath id="matrix-right"><rect x="672" y="{MATRIX_TOP}" width="158" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
+        '</defs>',
+        '<g font-family="Consolas, Menlo, monospace" font-weight="700">',
+        '<g clip-path="url(#matrix-left)">',
+    ]
+    for i, x in enumerate(MATRIX_LEFT_XS):
+        stream = MATRIX_STREAMS[i % len(MATRIX_STREAMS)]
+        out.append(_matrix_column(x, stream, 6.8 + (i % 4) * 1.35, -i * 0.65, opacity))
+    out.append('</g><g clip-path="url(#matrix-right)">')
+    for i, x in enumerate(MATRIX_RIGHT_XS):
+        stream = MATRIX_STREAMS[(i + 3) % len(MATRIX_STREAMS)]
+        out.append(_matrix_column(x, stream, 7.5 + (i % 5) * 1.2, -i * 0.82 - 0.4, opacity))
+    out.append('</g></g>')
+    return ''.join(out)
+
+
 def render(mode, stats):
     p = PALETTES[mode]
     x0 = (CARD_WIDTH - ANSI_PIXEL_WIDTH) // 2
@@ -626,6 +308,7 @@ def render(mode, stats):
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{CARD_WIDTH}" height="{CARD_HEIGHT}" viewBox="0 0 {CARD_WIDTH} {CARD_HEIGHT}" '
         f'font-family="Consolas, Menlo, monospace" font-size="13px">',
         f'<rect x="0.5" y="0.5" width="{CARD_WIDTH - 1}" height="{CARD_HEIGHT - 1}" rx="10" fill="{p["bg"]}" stroke="{p["border"]}"/>',
+        matrix_rain(mode),
         f'<g transform="translate({x0} {ANSI_Y})" shape-rendering="crispEdges">',
         f'<path d="{paths[1]}" fill="{ANSI_SHADOW}"/>',
         f'<path d="{paths[2]}" fill="{ANSI_MAIN}"/>',
@@ -636,19 +319,9 @@ def render(mode, stats):
     for i, segs in enumerate(info_lines(stats)):
         if not segs:
             continue
-        y = INFO_Y + i * INFO_LINE_HEIGHT
-        cursor = INFO_X
-        for txt, role in segs:
-            if not txt:
-                continue
-            width = len(txt) * MONO_ADVANCE
-            if role == 'k':
-                path = bitmap_label_path(txt, cursor, y - LABEL_FONT_TOP_OFFSET)
-                out.append(f'<path d="{path}" fill="{p["k"]}" shape-rendering="crispEdges"/>')
-            else:
-                out.append(render_text_segment(txt, p[role], cursor, y, width))
-            cursor += width
-    out.append('</svg>')
+        spans = "".join(f'<tspan fill="{p[c]}">{html.escape(t)}</tspan>' for t, c in segs)
+        out.append(f'<text x="{INFO_X}" y="{INFO_Y + i * INFO_LINE_HEIGHT}" xml:space="preserve">{spans}</text>')
+    out.append("</svg>")
     return "\n".join(out)
 
 
@@ -662,9 +335,9 @@ def selfcheck():
     assert ANSI_PIXEL_WIDTH < CARD_WIDTH
     assert ANSI_Y + ANSI_PIXEL_HEIGHT < INFO_Y
     assert (ANSI_MAIN, ANSI_HIGHLIGHT, ANSI_SHADOW) == ("#39FF14", "#F4FF63", "#0E7A0D")
-    assert pixel_text_path('TEST', 0, 0)
-    assert PIXEL_CHAR_ADVANCE == 7
-    assert bitmap_label_path("IDE: ", 0, 0)
+    assert "DRACONOV" in "".join(MATRIX_STREAMS)
+    assert max(MATRIX_LEFT_XS) < INFO_X
+    assert min(MATRIX_RIGHT_XS) > INFO_X + 400
 
 
 if __name__ == "__main__":
