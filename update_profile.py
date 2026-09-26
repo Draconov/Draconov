@@ -47,8 +47,8 @@ MATRIX_LEFT_COLUMNS = (
     {"x": 160, "trail": 6,  "step": 14, "dur": 12.0,"delay": -5.8, "phase": 39, "density": 0.52, "opacity": 0.48, "size": 9.6,  "jitter": 0.5},
 )
 MATRIX_RIGHT_COLUMNS = (
-    {"x": 680, "trail": 6,  "step": 14, "dur": 11.8,"delay": -5.7, "phase": 38, "density": 0.52, "opacity": 0.48, "size": 9.6,  "jitter": 0.5},
-    {"x": 696, "trail": 8,  "step": 13, "dur": 10.7,"delay": -4.7, "phase": 34, "density": 0.61, "opacity": 0.64, "size": 9.9,  "jitter": 0.6},
+    {"x": 666, "trail": 6,  "step": 14, "dur": 11.8,"delay": -5.7, "phase": 38, "density": 0.52, "opacity": 0.48, "size": 9.6,  "jitter": 0.5},
+    {"x": 684, "trail": 8,  "step": 13, "dur": 10.7,"delay": -4.7, "phase": 34, "density": 0.61, "opacity": 0.64, "size": 9.9,  "jitter": 0.6},
     {"x": 716, "trail": 13, "step": 11, "dur": 8.0, "delay": -2.2, "phase": 18, "density": 0.87, "opacity": 0.79, "size": 10.6, "jitter": 0.7},
     {"x": 737, "trail": 9,  "step": 12, "dur": 9.6, "delay": -4.1, "phase": 28, "density": 0.69, "opacity": 0.77, "size": 10.2, "jitter": 0.8},
     {"x": 756, "trail": 15, "step": 10, "dur": 6.8, "delay": -1.2, "phase": 7,  "density": 0.93, "opacity": 0.91, "size": 11.0, "jitter": 1.1},
@@ -369,31 +369,31 @@ def _matrix_column(spec, seed, glow_filter, mode):
 
 def matrix_rain(mode):
     glow_std = 1.15 if mode == "dark" else 0.65
-    fog_opacity = 0.065 if mode == "dark" else 0.024
+    fog_opacity = 0.082 if mode == "dark" else 0.028
     out = [
         '<defs>',
-        f'<clipPath id="matrix-left"><rect x="8" y="{MATRIX_TOP}" width="162" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
-        f'<clipPath id="matrix-right"><rect x="670" y="{MATRIX_TOP}" width="162" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
+        f'<clipPath id="matrix-left"><rect x="1" y="{MATRIX_TOP}" width="189" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
+        f'<clipPath id="matrix-right"><rect x="650" y="{MATRIX_TOP}" width="189" height="{MATRIX_BOTTOM - MATRIX_TOP}"/></clipPath>',
         '<linearGradient id="matrix-edge-left" x1="0" y1="0" x2="1" y2="0">'
         '<stop offset="0%" stop-color="#39FF14" stop-opacity="1"/>'
-        '<stop offset="58%" stop-color="#39FF14" stop-opacity="0.18"/>'
+        '<stop offset="42%" stop-color="#39FF14" stop-opacity="0.42"/>'
         '<stop offset="100%" stop-color="#39FF14" stop-opacity="0"/></linearGradient>',
         '<linearGradient id="matrix-edge-right" x1="1" y1="0" x2="0" y2="0">'
         '<stop offset="0%" stop-color="#39FF14" stop-opacity="1"/>'
-        '<stop offset="58%" stop-color="#39FF14" stop-opacity="0.18"/>'
+        '<stop offset="42%" stop-color="#39FF14" stop-opacity="0.42"/>'
         '<stop offset="100%" stop-color="#39FF14" stop-opacity="0"/></linearGradient>',
         '<linearGradient id="matrix-vertical-fade" x1="0" y1="0" x2="0" y2="1">'
         '<stop offset="0%" stop-color="white" stop-opacity="0.20"/>'
         '<stop offset="10%" stop-color="white" stop-opacity="1"/>'
         '<stop offset="90%" stop-color="white" stop-opacity="1"/>'
         '<stop offset="100%" stop-color="white" stop-opacity="0.22"/></linearGradient>',
-        '<mask id="matrix-left-mask"><rect x="8" y="0" width="162" height="590" fill="url(#matrix-vertical-fade)"/></mask>',
-        '<mask id="matrix-right-mask"><rect x="670" y="0" width="162" height="590" fill="url(#matrix-vertical-fade)"/></mask>',
+        '<mask id="matrix-left-mask"><rect x="1" y="0" width="189" height="590" fill="url(#matrix-vertical-fade)"/></mask>',
+        '<mask id="matrix-right-mask"><rect x="615" y="0" width="224" height="590" fill="url(#matrix-vertical-fade)"/></mask>',
         f'<filter id="matrix-glow" x="-70%" y="-25%" width="240%" height="150%">'
         f'<feGaussianBlur stdDeviation="{glow_std}"/></filter>',
         '</defs>',
-        f'<rect x="8" y="0" width="162" height="{CARD_HEIGHT}" fill="url(#matrix-edge-left)" opacity="{fog_opacity}" mask="url(#matrix-left-mask)"/>',
-        f'<rect x="670" y="0" width="162" height="{CARD_HEIGHT}" fill="url(#matrix-edge-right)" opacity="{fog_opacity}" mask="url(#matrix-right-mask)"/>',
+        f'<rect x="1" y="0" width="189" height="{CARD_HEIGHT}" fill="url(#matrix-edge-left)" opacity="{fog_opacity}" mask="url(#matrix-left-mask)"/>',
+        f'<rect x="615" y="0" width="224" height="{CARD_HEIGHT}" fill="url(#matrix-edge-right)" opacity="{fog_opacity}" mask="url(#matrix-right-mask)"/>',
         '<g font-family="Consolas, Menlo, monospace" font-weight="700" letter-spacing="0.2px">',
         '<g clip-path="url(#matrix-left)" mask="url(#matrix-left-mask)">',
     ]
