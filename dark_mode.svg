@@ -20,11 +20,6 @@
 <text x="200" y="444" xml:space="preserve"><tspan fill="#ffa657">GitHub: </tspan><tspan fill="#484f58">............................ </tspan><tspan fill="#c9d1d9">github.com/Draconov</tspan></text>
 <text x="200" y="486" xml:space="preserve"><tspan fill="#58a6ff">─ GitHub Stats </tspan><tspan fill="#484f58">─────────────────────────────────────────</tspan></text>
 <text x="200" y="507" xml:space="preserve"><tspan fill="#ffa657">Repos: </tspan><tspan fill="#484f58">... </tspan><tspan fill="#c9d1d9">31 {Contributed: 1}</tspan><tspan fill="#484f58"> | </tspan><tspan fill="#ffa657">Stars: </tspan><tspan fill="#484f58">.............. </tspan><tspan fill="#c9d1d9">1</tspan></text>
-<<<<<<< Updated upstream
-<text x="200" y="528" xml:space="preserve"><tspan fill="#ffa657">Commits: </tspan><tspan fill="#484f58">................. </tspan><tspan fill="#c9d1d9">829</tspan><tspan fill="#484f58"> | </tspan><tspan fill="#ffa657">Followers: </tspan><tspan fill="#484f58">.......... </tspan><tspan fill="#c9d1d9">5</tspan></text>
-<text x="200" y="549" xml:space="preserve"><tspan fill="#ffa657">Lines of Code: </tspan><tspan fill="#c9d1d9">887,625</tspan><tspan fill="#484f58"> ( </tspan><tspan fill="#3fb950">1,097,854++</tspan><tspan fill="#484f58">, </tspan><tspan fill="#f85149">210,229--</tspan><tspan fill="#484f58"> )</tspan></text>
-=======
 <text x="200" y="528" xml:space="preserve"><tspan fill="#ffa657">Commits: </tspan><tspan fill="#484f58">................. </tspan><tspan fill="#c9d1d9">826</tspan><tspan fill="#484f58"> | </tspan><tspan fill="#ffa657">Followers: </tspan><tspan fill="#484f58">.......... </tspan><tspan fill="#c9d1d9">5</tspan></text>
 <text x="200" y="549" xml:space="preserve"><tspan fill="#ffa657">Lines of Code: </tspan><tspan fill="#c9d1d9">887,455</tspan><tspan fill="#484f58"> ( </tspan><tspan fill="#3fb950">1,097,650++</tspan><tspan fill="#484f58">, </tspan><tspan fill="#f85149">210,195--</tspan><tspan fill="#484f58"> )</tspan></text>
->>>>>>> Stashed changes
 </svg>
