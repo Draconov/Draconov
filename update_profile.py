@@ -3,6 +3,9 @@ import calendar
 import html
 import json
 import os
+import random
+import time
+import urllib.error
 import urllib.request
 import zlib
 from datetime import date, datetime, timezone
@@ -79,14 +82,34 @@ def gh(url, payload=None, token=None):
         data=json.dumps(payload).encode() if payload else None,
         headers={"Authorization": f"Bearer {token or TOKEN}", "Accept": "application/vnd.github+json"},
     )
-    with urllib.request.urlopen(req) as r:
-        return r.status, json.loads(r.read() or "{}")
+    for attempt in range(5):
+        try:
+            with urllib.request.urlopen(req, timeout=25) as r:
+                return r.status, json.loads(r.read() or "{}")
+        except urllib.error.HTTPError as exc:
+            if exc.code not in (408, 429, 500, 502, 503, 504) or attempt == 4:
+                raise
+            retry_after = exc.headers.get("Retry-After")
+        except (urllib.error.URLError, TimeoutError) as exc:
+            if attempt == 4:
+                raise
+            retry_after = None
+        delay = min(2 ** attempt + random.uniform(0, 0.5), 20)
+        if retry_after:
+            try:
+                delay = max(delay, min(float(retry_after), 30))
+            except (TypeError, ValueError):
+                pass
+        print(f"GitHub API request failed ({exc}); retry {attempt + 1}/4 in {delay:.1f}s", flush=True)
+        time.sleep(delay)
 
 
 def graphql(query, variables=None, token=None):
     _, resp = gh("https://api.github.com/graphql", {"query": query, "variables": variables or {}}, token)
     if resp.get("errors"):
         raise RuntimeError(resp["errors"])
+    if not resp.get("data"):
+        raise RuntimeError("GitHub GraphQL response has no data")
     return resp["data"]
 
 
@@ -101,17 +124,30 @@ def age(b, t):
     return years, months, days
 
 
+def _yearly_commits(year):
+    query = """query($login: String!, $from: DateTime!, $to: DateTime!) {
+      user(login: $login) {
+        period: contributionsCollection(from: $from, to: $to) {
+          totalCommitContributions
+          restrictedContributionsCount
+        }
+      }
+    }"""
+    user = graphql(query, {
+        "login": USER,
+        "from": f"{year}-01-01T00:00:00Z",
+        "to": f"{year}-12-31T23:59:59Z",
+    })["user"]
+    if user is None:
+        raise RuntimeError(f"GitHub user {USER!r} not found")
+    period = user["period"]
+    count = period["totalCommitContributions"] + period["restrictedContributionsCount"]
+    print(f"Contributions {year}: {count}", flush=True)
+    return count
+
+
 def fetch_stats():
-    yr_aliases = "\n".join(
-        f'y{y}: contributionsCollection(from: "{y}-01-01T00:00:00Z", to: "{y + 1}-01-01T00:00:00Z")'
-        " { totalCommitContributions restrictedContributionsCount }"
-        for y in range(JOINED_YEAR, datetime.now(timezone.utc).year + 1)
-    )
-    contrib = graphql(f'query {{ user(login: "{USER}") {{ {yr_aliases} }} }}')["user"]
-    commits = sum(
-        v["totalCommitContributions"] + v["restrictedContributionsCount"]
-        for v in contrib.values()
-    )
+    commits = sum(_yearly_commits(year) for year in range(JOINED_YEAR, datetime.now(timezone.utc).year + 1))
 
     u = graphql(f"""
     query {{
